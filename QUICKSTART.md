@@ -119,7 +119,7 @@ app.use(uviewPlus)
 ## 📚 目录说明
 
 ```
-miniprogram/
+/
 ├── src/
 │   ├── pages/          # 所有页面文件
 │   ├── api/           # API 接口定义

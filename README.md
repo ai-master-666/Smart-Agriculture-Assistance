@@ -28,7 +28,6 @@ miniprogram/
 ### 1. 安装依赖
 
 ```bash
-cd miniprogram
 npm install
 ```
 
@@ -41,7 +40,7 @@ npm run dev:mp-weixin
 ### 3. 在微信开发者工具中打开
 
 - 打开微信开发者工具
-- 导入项目，选择 `miniprogram/dist/dev/mp-weixin` 目录
+- 导入项目，选择 `dist/dev/mp-weixin` 目录
 - 在小程序管理后台配置合法域名（开发环境可跳过）
 
 ## 已实现功能

@@ -66,26 +66,24 @@ const startDiagnose = async () => {
   
   isAnalyzing.value = true
   try {
-    // 预留：真实调用后端识别接口
-    // const res = await diagnoseCrop(imagePath.value)
-    // result.value = res
-    
-    // 模拟识别结果
-    setTimeout(() => {
-      result.value = {
-        disease_name: '番茄早疫病',
-        confidence: 0.95,
-        description: '叶片上出现圆形或近圆形褐色病斑，有同心轮纹。',
-        treatment: '建议喷洒代森锰锌或百菌清可湿性粉剂，每7-10天一次，连续2-3次。',
-        preventive_measures: '加强通风透光，控制田间湿度。'
-      }
-      isAnalyzing.value = false
-    }, 2000)
-    
+    // 真实调用后端识别接口
+    const res = await diagnoseCrop(imagePath.value)
+    if (res) {
+      result.value = res
+    }
   } catch (e) {
-    console.error(e)
+    console.error('AI Diagnose Error:', e)
+    
+    // 模拟识别结果兜底
+    result.value = {
+      disease_name: '番茄早疫病 (模拟)',
+      confidence: 0.95,
+      description: '未能连接 AI 服务，这是本地模拟的诊断结果。叶片上出现圆形或近圆形褐色病斑，有同心轮纹。',
+      treatment: '建议喷洒代森锰锌或百菌清可湿性粉剂，每7-10天一次，连续2-3次。',
+      preventive_measures: '加强通风透光，控制田间湿度。'
+    }
+  } finally {
     isAnalyzing.value = false
-    uni.showToast({ title: '识别失败，请重试', icon: 'none' })
   }
 }
 </script>

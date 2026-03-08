@@ -75,3 +75,66 @@ export const httpPut = <T = any>(url: string, data?: any, needAuth = true) =>
 
 export const httpDelete = <T = any>(url: string, data?: any, needAuth = true) => 
   request<T>({ url, method: 'DELETE', data, needAuth })
+
+interface UploadOptions {
+  url: string
+  filePath: string
+  name?: string
+  formData?: any
+  header?: any
+  needAuth?: boolean
+}
+
+export function upload<T = any>(options: UploadOptions): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const token = storage.get('access_token')
+    
+    uni.uploadFile({
+      url: `${BASE_URL}${options.url}`,
+      filePath: options.filePath,
+      name: options.name || 'file',
+      formData: options.formData,
+      header: {
+        ...(token && options.needAuth !== false ? { Authorization: `Bearer ${token}` } : {}),
+        ...options.header
+      },
+      success: (res) => {
+        const statusCode = res.statusCode
+        let data: any
+        try {
+          data = JSON.parse(res.data)
+        } catch (e) {
+          data = res.data
+        }
+        
+        if (statusCode === 200) {
+          resolve(data as T)
+        } else if (statusCode === 401) {
+          // Token 过期，跳转登录
+          if (options.needAuth === false) {
+             resolve({} as T)
+             return
+          }
+
+          const pages = getCurrentPages()
+          const currentPage = pages[pages.length - 1]
+          if (currentPage && currentPage.route !== 'pages/user/login') {
+              uni.navigateTo({ url: '/pages/user/login' })
+          }
+          reject(new Error('未登录'))
+        } else {
+          uni.showToast({ title: data?.message || '上传失败', icon: 'none' })
+          reject(data)
+        }
+      },
+      fail: (err) => {
+        console.error('Upload error:', err)
+        uni.showToast({ title: '网络错误', icon: 'none' })
+        reject(err)
+      }
+    })
+  })
+}
+
+export const httpUpload = <T = any>(url: string, filePath: string, name = 'file', formData?: any, needAuth = true) => 
+  upload<T>({ url, filePath, name, formData, needAuth })

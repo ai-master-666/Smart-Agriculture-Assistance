@@ -89,27 +89,24 @@ const handleSend = async () => {
   scrollToBottom()
   
   try {
-    // 调用预留的 AI 接口
-    // const res = await chatWithAI(query, messages.value)
-    // messages.value.push(res)
-    
-    // 模拟 AI 回复（在未对接真实后端前）
-    setTimeout(() => {
-      const mockReply: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: `收到您的问题：“${query}”。\n(此处为 AI 接口预留位置，后续对接 DeepSeek/ChatGPT 后将返回真实智能回答)`,
-        timestamp: Date.now()
-      }
-      messages.value.push(mockReply)
-      isLoading.value = false
-      scrollToBottom()
-    }, 1500)
-    
+    // 调用真实 AI 接口
+    const res = await chatWithAI(query, messages.value)
+    if (res) {
+      messages.value.push(res)
+    }
   } catch (e) {
-    console.error(e)
+    console.error('AI Service Error:', e)
+    // Mock 数据兜底，保证演示效果
+    const mockReply: ChatMessage = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: `(模拟回复) 收到您的问题：“${query}”。\n目前后端服务暂未连接，这是本地模拟的智能回复。对接 DeepSeek/ChatGPT 后将显示真实结果。`,
+      timestamp: Date.now()
+    }
+    messages.value.push(mockReply)
+  } finally {
     isLoading.value = false
-    uni.showToast({ title: 'AI 服务暂时不可用', icon: 'none' })
+    scrollToBottom()
   }
 }
 </script>
