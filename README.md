@@ -2,7 +2,6 @@
 
 ## 项目结构
 
-```
 miniprogram/
 ├── src/
 │   ├── pages/              # 页面目录
