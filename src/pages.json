@@ -1,0 +1,128 @@
+{
+	"pages": [
+		{
+			"path": "pages/shop/index",
+			"style": {
+				"navigationBarTitleText": "数智农旅"
+			}
+		},
+		{
+			"path": "pages/user/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/user/register",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path": "pages/user/profile",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/shop/detail",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
+		},
+		{
+			"path": "pages/shop/cart",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
+		},
+		{
+			"path": "pages/shop/order",
+			"style": {
+				"navigationBarTitleText": "订单列表"
+			}
+		},
+		{
+			"path": "pages/live/index",
+			"style": {
+				"navigationBarTitleText": "直播列表"
+			}
+		},
+		{
+			"path": "pages/live/room",
+			"style": {
+				"navigationBarTitleText": "直播间"
+			}
+		},
+		{
+			"path": "pages/course/index",
+			"style": {
+				"navigationBarTitleText": "培训课程"
+			}
+		},
+		{
+			"path": "pages/tour/index",
+			"style": {
+				"navigationBarTitleText": "乡村景点"
+			}
+		},
+		{
+			"path": "pages/ai/index",
+			"style": {
+				"navigationBarTitleText": "AI 助手"
+			}
+		},
+		{
+			"path": "pages/ai/chat",
+			"style": {
+				"navigationBarTitleText": "智能问答"
+			}
+		},
+		{
+			"path": "pages/ai/diagnose",
+			"style": {
+				"navigationBarTitleText": "拍照诊断"
+			}
+		},
+		{
+			"path": "pages/admin/dashboard",
+			"style": {
+				"navigationBarTitleText": "管理后台"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "数智农旅平台",
+		"navigationBarBackgroundColor": "#667eea",
+		"backgroundColor": "#f8f8f8"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#667eea",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/shop/index",
+				"text": "商城"
+			},
+			{
+				"pagePath": "pages/live/index",
+				"text": "直播"
+			},
+			{
+				"pagePath": "pages/ai/index",
+				"text": "AI助手"
+			},
+			{
+				"pagePath": "pages/course/index",
+				"text": "培训"
+			},
+			{
+				"pagePath": "pages/user/profile",
+				"text": "我的"
+			}
+		]
+	}
+}

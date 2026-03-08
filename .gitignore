@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.hbuilderx/
+unpackage/
+.idea/
+*.iml
+.vscode/
+.env.local
+.env.*.local
+src/manifest.json.bak

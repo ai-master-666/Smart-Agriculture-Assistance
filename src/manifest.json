@@ -1,0 +1,29 @@
+{
+    "name": "数智农旅平台",
+    "appid": "__UNI__SMART_AGRO",
+    "description": "面向县域乡村振兴的数字化平台",
+    "versionName": "1.0.0",
+    "versionCode": "100",
+    "transformPx": false,
+    "mp-weixin": {
+        "appid": "wxxxxxxxxxxx",
+        "setting": {
+            "urlCheck": false,
+            "es6": true,
+            "minified": true,
+            "postcss": true
+        },
+        "usingComponents": true,
+        "permission": {
+            "scope.userLocation": {
+                "desc": "用于景点导览定位"
+            }
+        },
+        "lazyCodeLoading": "requiredComponents"
+    },
+    "h5": {
+        "devServer": {
+            "port": 5174
+        }
+    }
+}
