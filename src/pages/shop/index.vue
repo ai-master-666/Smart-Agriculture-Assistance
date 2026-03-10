@@ -2,21 +2,28 @@
   <view class="shop-container">
     <!-- 顶部搜索与定位 -->
     <view class="header-section">
-      <view class="location-bar">
+      <view class="location-bar" @click="onLocationClick">
         <u-icon name="map-fill" color="#667eea" size="16"></u-icon>
-        <text class="location-text">桃源村</text>
+        <text class="location-text">{{ currentLocation }}</text>
         <u-icon name="arrow-down" color="#333" size="12"></u-icon>
       </view>
       <view class="search-box">
-        <u-search 
-          placeholder="搜索农产品/乡村景点" 
-          v-model="keyword" 
-          :show-action="false"
-          bg-color="#f5f5f5"
-          height="36"
-          @search="onSearch" 
-          @custom="onSearch"
-        ></u-search>
+        <view class="custom-search-bar">
+          <u-icon name="search" size="18" color="#999"></u-icon>
+          <input 
+            class="search-input" 
+            type="text" 
+            v-model="keyword" 
+            placeholder="搜索农产品/乡村景点" 
+            placeholder-class="placeholder-style"
+            confirm-type="search"
+            @confirm="onSearch"
+          />
+          <view class="search-action" @click="onSearch">
+            <view class="divider"></view>
+            <text class="search-text">搜索</text>
+          </view>
+        </view>
       </view>
     </view>
     
@@ -160,6 +167,7 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getProductList, addToCart } from '@/api/product'
 import type { Product } from '@/api/product'
 
+const currentLocation = ref('桃源村')
 const keyword = ref('')
 const productList = ref<Product[]>([])
 const isLoading = ref(true)
@@ -213,6 +221,11 @@ const loadProducts = async () => {
   }
 }
 
+const onLocationClick = () => {
+  // 点击直接触发重新定位
+  initLocation()
+}
+
 const onSearch = () => {
   loadProducts()
 }
@@ -251,7 +264,76 @@ const addToCartQuick = async (item: Product) => {
   }
 }
 
+const initLocation = () => {
+  currentLocation.value = '定位中...'
+  uni.getLocation({
+    type: 'gcj02',
+    success: (res) => {
+      console.log('当前位置：', res.latitude, res.longitude)
+      // 模拟逆地理编码逻辑：优先定位到建筑，其次是村庄
+      // 真实开发需调用腾讯地图/高德地图 API 的逆地理编码接口
+      // const address = await reverseGeocoder(res.latitude, res.longitude)
+      
+      // 模拟数据池
+      const buildings = ['村委会', '便民超市', '卫生室', '农机站', '文化广场']
+      const villages = ['桃源村', '李家庄', '杏花岭', '大王庄', '幸福里']
+      
+      // 模拟定位结果：70%概率定位到具体建筑，30%概率定位到村庄
+      const isBuilding = Math.random() > 0.3
+      let locationName = ''
+      
+      if (isBuilding) {
+        const randomBuilding = buildings[Math.floor(Math.random() * buildings.length)]
+        locationName = randomBuilding
+      } else {
+        const randomVillage = villages[Math.floor(Math.random() * villages.length)]
+        locationName = randomVillage
+      }
+      
+      currentLocation.value = locationName
+      uni.showToast({
+        title: `已定位到${locationName}`,
+        icon: 'none'
+      })
+      
+      // 定位成功后刷新商品列表
+      loadProducts()
+    },
+    fail: (err) => {
+      console.error('定位失败', err)
+      currentLocation.value = '定位失败'
+      
+      // 判断是否为权限被拒绝 (err.errMsg 包含 "auth deny" 或 "authorize:fail")
+      if (err.errMsg.indexOf('auth deny') !== -1 || err.errMsg.indexOf('authorize:fail') !== -1) {
+        uni.showModal({
+          title: '定位权限未开启',
+          content: '请在设置中开启位置信息权限，以便为您提供周边服务',
+          confirmText: '去设置',
+          success: (res) => {
+            if (res.confirm) {
+              uni.openSetting({
+                success: (settingRes) => {
+                  if (settingRes.authSetting['scope.userLocation']) {
+                    // 用户打开设置并开启了权限，重新定位
+                    initLocation()
+                  }
+                }
+              })
+            }
+          }
+        })
+      } else {
+        uni.showToast({
+          title: '定位失败，请检查网络或GPS',
+          icon: 'none'
+        })
+      }
+    }
+  })
+}
+
 onLoad(() => {
+  initLocation()
   loadProducts()
 })
 
@@ -295,6 +377,45 @@ onShow(() => {
   
   .search-box {
     flex: 1;
+    
+    .custom-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: #f5f5f5;
+      height: 72rpx;
+      border-radius: 36rpx;
+      padding: 0 24rpx;
+      
+      .search-input {
+        flex: 1;
+        height: 100%;
+        margin: 0 16rpx;
+        font-size: 28rpx;
+        color: #333;
+      }
+      
+      .placeholder-style {
+        color: #999;
+      }
+      
+      .search-action {
+        display: flex;
+        align-items: center;
+        
+        .divider {
+          width: 2rpx;
+          height: 28rpx;
+          background-color: #ddd;
+          margin-right: 20rpx;
+        }
+        
+        .search-text {
+          font-size: 28rpx;
+          color: #333;
+          font-weight: 500;
+        }
+      }
+    }
   }
 }
 

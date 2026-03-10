@@ -19,6 +19,9 @@
                 "desc": "用于景点导览定位"
             }
         },
+        "requiredPrivateInfos": [
+            "getLocation"
+        ],
         "lazyCodeLoading": "requiredComponents"
     },
     "h5": {

@@ -25,6 +25,19 @@
 			}
 		},
 		{
+			"path": "pages/user/info",
+			"style": {
+				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path": "pages/farmer/index",
+			"style": {
+				"navigationBarTitleText": "农户工作台",
+				"navigationBarBackgroundColor": "#4caf50"
+			}
+		},
+		{
 			"path": "pages/shop/detail",
 			"style": {
 				"navigationBarTitleText": "商品详情"
@@ -105,23 +118,33 @@
 		"list": [
 			{
 				"pagePath": "pages/shop/index",
-				"text": "商城"
+				"text": "商城",
+				"iconPath": "static/tabbar/shop.png",
+				"selectedIconPath": "static/tabbar/shop-active.png"
 			},
 			{
 				"pagePath": "pages/live/index",
-				"text": "直播"
+				"text": "直播",
+				"iconPath": "static/tabbar/live.png",
+				"selectedIconPath": "static/tabbar/live-active.png"
 			},
 			{
 				"pagePath": "pages/ai/index",
-				"text": "AI助手"
+				"text": "AI助手",
+				"iconPath": "static/tabbar/ai.png",
+				"selectedIconPath": "static/tabbar/ai-active.png"
 			},
 			{
 				"pagePath": "pages/course/index",
-				"text": "培训"
+				"text": "培训",
+				"iconPath": "static/tabbar/course.png",
+				"selectedIconPath": "static/tabbar/course-active.png"
 			},
 			{
 				"pagePath": "pages/user/profile",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "static/tabbar/user.png",
+				"selectedIconPath": "static/tabbar/user-active.png"
 			}
 		]
 	}
