@@ -28,8 +28,8 @@
     </view>
     
     <!-- 退出登录按钮 -->
-    <view class="logout-btn-container">
-      <u-button type="error" text="退出当前账号" shape="circle" @click="handleLogout"></u-button>
+    <view class="footer-btn-view">
+      <button class="custom-logout-btn" @click="handleLogout">退出当前账号</button>
     </view>
   </view>
 </template>
@@ -71,8 +71,19 @@ const handleLogout = () => {
     content: '确定要退出登录吗？',
     success: (res) => {
       if (res.confirm) {
+        // 清除所有本地存储
         storage.clear()
-        uni.reLaunch({ url: '/pages/user/login' })
+        
+        // 跳转到登录页，并关闭所有页面
+        uni.reLaunch({
+          url: '/pages/user/login',
+          success: () => {
+            uni.showToast({
+              title: '已退出登录',
+              icon: 'success'
+            })
+          }
+        })
       }
     }
   })
@@ -83,16 +94,12 @@ const handleLogout = () => {
 .user-info-container {
   min-height: 100vh;
   background-color: #f8f9fa;
-  padding-top: 20rpx;
-  padding-bottom: 160rpx; // Prevent content from being hidden by fixed button
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 200rpx; // Add enough padding for footer
 }
 
 .info-list {
   background-color: #fff;
   margin-top: 20rpx;
-  // flex: 1;  <-- Removed to let it size naturally
   
   .info-item {
     display: flex;
@@ -100,7 +107,7 @@ const handleLogout = () => {
     align-items: center;
     padding: 30rpx 40rpx;
     border-bottom: 1rpx solid #f5f5f5;
-    background-color: #fff; // Ensure background is white
+    background-color: #fff;
     
     &:active {
       background-color: #f9f9f9;
@@ -131,14 +138,32 @@ const handleLogout = () => {
   }
 }
 
-.logout-btn-container {
-  padding: 40rpx;
-  margin-top: 60rpx;
+.footer-btn-view {
   position: fixed;
   bottom: 0;
   left: 0;
-  right: 0;
+  width: 100%;
+  padding: 30rpx 40rpx;
+  padding-bottom: calc(30rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
   background-color: #f8f9fa;
-  z-index: 100;
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.custom-logout-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #ff4d4f;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  text-align: center;
+  border: none;
+  
+  &::after {
+    border: none;
+  }
 }
 </style>

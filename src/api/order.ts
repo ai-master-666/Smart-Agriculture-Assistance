@@ -23,10 +23,15 @@ export interface Order {
   id: number
   order_no: string
   total_price: number
-  status: string
+  status: string // pending_payment, pending_shipment, shipped, completed, cancelled, refunding, refunded
   create_time: string
   items?: OrderItem[]
   address?: any
+  logistics_company?: string
+  logistics_no?: string
+  remark?: string
+  buyer_name?: string // 卖家视角
+  buyer_avatar?: string
 }
 
 /**
@@ -47,13 +52,7 @@ export function addToCart(productId: number, quantity: number = 1) {
  * 更新购物车数量
  */
 export function updateCartItem(cartId: number, quantity: number) {
-  return httpPut(`/cart/items/${cartId}`, null, true) // Assuming query param or body? Backend code says: update_cart_item(cart_id, quantity) - likely query param if not in body model.
-  // Wait, backend: async def update_cart_item(cart_id: int, quantity: int...
-  // Usually FastAPI expects query params if not Pydantic model.
-  // Let's check backend code again carefully. 
-  // It says: async def update_cart_item(cart_id: int, quantity: int, ...)
-  // This implies `quantity` is a query parameter!
-  // So url should be `/cart/items/${cartId}?quantity=${quantity}`
+  return httpPut(`/cart/items/${cartId}?quantity=${quantity}`)
 }
 
 export function updateCartItemQuery(cartId: number, quantity: number) {
@@ -75,14 +74,13 @@ export function createOrder(data: { items: { product_id: number, quantity: numbe
 }
 
 /**
- * 获取订单列表
+ * 获取订单列表 (买家)
  */
 export async function getOrderList(params?: { status?: string, page?: number, page_size?: number }) {
   try {
       return await httpGet<Order[]>('/orders', params)
   } catch (e) {
       console.error('API Error, using mock data', e)
-      // Mock data fallback for demonstration
       return [
         {
           id: 1,
@@ -97,7 +95,7 @@ export async function getOrderList(params?: { status?: string, page?: number, pa
               product_name: '农家土鸡蛋',
               price: 49.9,
               quantity: 2,
-              product_image: ''
+              product_image: '/static/default-product.png'
             }
           ]
         }
@@ -117,4 +115,78 @@ export function getOrderDetail(orderId: number) {
  */
 export function cancelOrder(orderId: number) {
   return httpPost(`/orders/${orderId}/cancel`)
+}
+
+// --- 卖家相关接口 ---
+
+/**
+ * 获取卖家订单列表
+ */
+export async function getFarmerOrderList(params?: { status?: string, page?: number, page_size?: number }) {
+  try {
+    return await httpGet<Order[]>('/farmer/orders', params)
+  } catch (e) {
+    console.error('API Error, using mock data', e)
+    // Mock data for farmer
+    return [
+      {
+        id: 101,
+        order_no: 'ORD202603080001',
+        status: 'pending_shipment',
+        total_price: 128.00,
+        create_time: '2026-03-08 09:30:00',
+        buyer_name: '李雷',
+        address: {
+          name: '李雷',
+          phone: '13800138000',
+          detail: '北京市朝阳区三里屯SOHO'
+        },
+        items: [
+          {
+            product_id: 2,
+            product_name: '高山茶叶',
+            price: 128.00,
+            quantity: 1,
+            product_image: '/static/default-product.png'
+          }
+        ]
+      },
+      {
+        id: 102,
+        order_no: 'ORD202603080002',
+        status: 'refunding',
+        total_price: 58.00,
+        create_time: '2026-03-08 10:15:00',
+        buyer_name: '韩梅梅',
+        address: {
+          name: '韩梅梅',
+          phone: '13900139000',
+          detail: '上海市浦东新区陆家嘴'
+        },
+        items: [
+          {
+            product_id: 3,
+            product_name: '农家自制腊肉',
+            price: 58.00,
+            quantity: 1,
+            product_image: '/static/default-product.png'
+          }
+        ]
+      }
+    ]
+  }
+}
+
+/**
+ * 订单发货
+ */
+export function shipOrder(orderId: number, logistics: { company: string, no: string }) {
+  return httpPost(`/farmer/orders/${orderId}/ship`, logistics)
+}
+
+/**
+ * 处理售后 (退款)
+ */
+export function refundOrder(orderId: number, action: 'approve' | 'reject', reason?: string) {
+  return httpPost(`/farmer/orders/${orderId}/refund`, { action, reason })
 }

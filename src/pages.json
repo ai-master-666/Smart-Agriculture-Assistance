@@ -7,6 +7,12 @@
 			}
 		},
 		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "发现"
+			}
+		},
+		{
 			"path": "pages/user/login",
 			"style": {
 				"navigationBarTitleText": "登录"
@@ -31,10 +37,82 @@
 			}
 		},
 		{
+			"path": "pages/user/settings",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/user/address",
+			"style": {
+				"navigationBarTitleText": "地址管理"
+			}
+		},
+		{
+			"path": "pages/user/coupon",
+			"style": {
+				"navigationBarTitleText": "我的优惠券"
+			}
+		},
+		{
+			"path": "pages/user/favorites",
+			"style": {
+				"navigationBarTitleText": "我的收藏"
+			}
+		},
+		{
+			"path": "pages/user/history",
+			"style": {
+				"navigationBarTitleText": "浏览历史"
+			}
+		},
+		{
+			"path": "pages/user/apply-farmer",
+			"style": {
+				"navigationBarTitleText": "申请成为农民"
+			}
+		},
+		{
 			"path": "pages/farmer/index",
 			"style": {
 				"navigationBarTitleText": "农户工作台",
 				"navigationBarBackgroundColor": "#4caf50"
+			}
+		},
+		{
+			"path": "pages/farmer/goods",
+			"style": {
+				"navigationBarTitleText": "商品管理列表"
+			}
+		},
+		{
+			"path": "pages/farmer/goods-edit",
+			"style": {
+				"navigationBarTitleText": "商品发布/编辑"
+			}
+		},
+		{
+			"path": "pages/farmer/live-center",
+			"style": {
+				"navigationBarTitleText": "直播中心"
+			}
+		},
+		{
+			"path": "pages/farmer/live-push",
+			"style": {
+				"navigationBarTitleText": "直播推流"
+			}
+		},
+		{
+			"path": "pages/farmer/data",
+			"style": {
+				"navigationBarTitleText": "数据中心"
+			}
+		},
+		{
+			"path": "pages/farmer/income",
+			"style": {
+				"navigationBarTitleText": "收益管理"
 			}
 		},
 		{
@@ -74,9 +152,33 @@
 			}
 		},
 		{
+			"path": "pages/course/detail",
+			"style": {
+				"navigationBarTitleText": "课程详情"
+			}
+		},
+		{
 			"path": "pages/tour/index",
 			"style": {
 				"navigationBarTitleText": "乡村景点"
+			}
+		},
+		{
+			"path": "pages/tour/detail",
+			"style": {
+				"navigationBarTitleText": "景点详情"
+			}
+		},
+		{
+			"path": "pages/tour/vr",
+			"style": {
+				"navigationBarTitleText": "VR全景"
+			}
+		},
+		{
+			"path": "pages/tour/booking",
+			"style": {
+				"navigationBarTitleText": "体验/民宿预订"
 			}
 		},
 		{
@@ -98,9 +200,111 @@
 			}
 		},
 		{
+			"path": "pages/ai/market",
+			"style": {
+				"navigationBarTitleText": "行情分析"
+			}
+		},
+		{
+			"path": "pages/ai/history",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
 			"path": "pages/admin/dashboard",
 			"style": {
 				"navigationBarTitleText": "管理后台"
+			}
+		},
+		{
+			"path": "pages/admin/audit-goods",
+			"style": {
+				"navigationBarTitleText": "商品审核"
+			}
+		},
+		{
+			"path": "pages/admin/audit-live",
+			"style": {
+				"navigationBarTitleText": "直播审核"
+			}
+		},
+		{
+			"path": "pages/admin/course-mgr",
+			"style": {
+				"navigationBarTitleText": "课程管理"
+			}
+		},
+		{
+			"path": "pages/admin/course-edit",
+			"style": {
+				"navigationBarTitleText": "课程编辑"
+			}
+		},
+		{
+			"path": "pages/admin/user-mgr",
+			"style": {
+				"navigationBarTitleText": "用户管理"
+			}
+		},
+		{
+			"path": "pages/admin/farmer-audit",
+			"style": {
+				"navigationBarTitleText": "农民认证审核"
+			}
+		},
+		{
+			"path": "pages/admin/operation",
+			"style": {
+				"navigationBarTitleText": "平台运营"
+			}
+		},
+		{
+			"path": "pages/admin/ai-knowledge",
+			"style": {
+				"navigationBarTitleText": "AI知识库"
+			}
+		},
+		{
+			"path": "pages/land/index",
+			"style": {
+				"navigationBarTitleText": "我的土地"
+			}
+		},
+		{
+			"path": "pages/land/detail",
+			"style": {
+				"navigationBarTitleText": "土地详情"
+			}
+		},
+		{
+			"path": "pages/land/monitor",
+			"style": {
+				"navigationBarTitleText": "环境监测"
+			}
+		},
+		{
+			"path": "pages/land/record",
+			"style": {
+				"navigationBarTitleText": "农事记录"
+			}
+		},
+		{
+			"path": "pages/farmer/order/list",
+			"style": {
+				"navigationBarTitleText": "订单管理"
+			}
+		},
+		{
+			"path": "pages/farmer/order/logistics",
+			"style": {
+				"navigationBarTitleText": "物流发货"
+			}
+		},
+		{
+			"path": "pages/farmer/order/aftersale",
+			"style": {
+				"navigationBarTitleText": "售后处理"
 			}
 		}
 	],

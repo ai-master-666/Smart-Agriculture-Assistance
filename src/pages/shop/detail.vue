@@ -24,6 +24,28 @@
       </view>
       
       <view class="divider"></view>
+
+      <!-- 评价预览 -->
+      <view class="review-section">
+        <view class="section-header" @click="goToReviews">
+          <text class="section-title">商品评价 ({{ product.review_count || 0 }})</text>
+          <u-icon name="arrow-right" size="14" color="#999"></u-icon>
+        </view>
+        
+        <view class="review-item" v-if="product.reviews && product.reviews.length > 0">
+          <view class="review-header">
+            <image :src="product.reviews[0].avatar || '/static/default-avatar.png'" class="avatar"></image>
+            <text class="nickname">{{ product.reviews[0].nickname }}</text>
+            <u-rate :count="5" v-model="product.reviews[0].rating" readonly size="12"></u-rate>
+          </view>
+          <text class="review-content">{{ product.reviews[0].content }}</text>
+        </view>
+        <view class="empty-review" v-else>
+          <text>暂无评价，快来抢沙发~</text>
+        </view>
+      </view>
+      
+      <view class="divider"></view>
       
       <view class="description-section">
         <text class="section-title">商品详情</text>
@@ -32,8 +54,16 @@
     </view>
     
     <view class="action-bar">
+      <view class="icon-btn" @click="goToHome">
+        <u-icon name="home" size="24" color="#666"></u-icon>
+        <text>首页</text>
+      </view>
+      <view class="icon-btn" @click="toggleFavorite">
+        <u-icon :name="isFavorite ? 'star-fill' : 'star'" size="24" :color="isFavorite ? '#ff4d4f' : '#666'"></u-icon>
+        <text>收藏</text>
+      </view>
       <view class="icon-btn" @click="goToCart">
-        <u-icon name="shopping-cart" size="24" color="#333"></u-icon>
+        <u-icon name="shopping-cart" size="24" color="#666"></u-icon>
         <text>购物车</text>
       </view>
       <button class="add-cart-btn" @click="handleAddToCart">加入购物车</button>
@@ -49,6 +79,7 @@ import { getProductDetail, addToCart } from '@/api/product'
 import type { Product } from '@/api/product'
 
 const product = ref<Product | null>(null)
+const isFavorite = ref(false)
 
 onLoad(async (options: any) => {
   if (options.id) {
@@ -56,6 +87,16 @@ onLoad(async (options: any) => {
       const res = await getProductDetail(Number(options.id))
       if (res) {
         product.value = res
+        // 模拟评价数据
+        product.value.review_count = 128
+        product.value.reviews = [
+          {
+            avatar: 'https://cdn.uviewui.com/uview/album/1.jpg',
+            nickname: '李**',
+            rating: 5,
+            content: '非常新鲜，包装也很好，第二天就到了！'
+          }
+        ]
       }
     } catch (e) {
       console.error('Failed to load product detail:', e)
@@ -66,6 +107,22 @@ onLoad(async (options: any) => {
     }
   }
 })
+
+const goToHome = () => {
+  uni.switchTab({ url: '/pages/shop/index' })
+}
+
+const toggleFavorite = () => {
+  isFavorite.value = !isFavorite.value
+  uni.showToast({
+    title: isFavorite.value ? '已收藏' : '已取消收藏',
+    icon: 'none'
+  })
+}
+
+const goToReviews = () => {
+  uni.showToast({ title: '查看全部评价', icon: 'none' })
+}
 
 const handleAddToCart = async () => {
   if (product.value) {
@@ -169,6 +226,68 @@ const goToCart = () => {
   height: 20rpx;
   background-color: #f8f8f8;
   margin: 0 -30rpx 30rpx;
+}
+
+.review-section {
+  margin-bottom: 30rpx;
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20rpx;
+    
+    .section-title {
+      font-size: 30rpx;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0;
+      border-left: none;
+      padding-left: 0;
+    }
+  }
+  
+  .review-item {
+    background: #f9f9f9;
+    padding: 20rpx;
+    border-radius: 12rpx;
+    
+    .review-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12rpx;
+      
+      .avatar {
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        margin-right: 12rpx;
+      }
+      
+      .nickname {
+        font-size: 26rpx;
+        color: #333;
+        margin-right: 16rpx;
+      }
+    }
+    
+    .review-content {
+      font-size: 26rpx;
+      color: #666;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+  }
+  
+  .empty-review {
+    padding: 30rpx 0;
+    text-align: center;
+    font-size: 26rpx;
+    color: #999;
+  }
 }
 
 .section-title {

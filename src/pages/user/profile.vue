@@ -14,7 +14,7 @@
             <text class="phone">{{ userInfo.phone || '未绑定手机' }}</text>
           </view>
           <view class="action-buttons">
-            <view class="switch-role-btn" @click="switchRole" v-if="userInfo.role !== 'farmer'">
+            <view class="switch-role-btn" @click="switchRole">
               <u-icon name="grid-fill" size="24" color="#fff"></u-icon>
               <text>切换农户</text>
             </view>
@@ -25,20 +25,20 @@
         </view>
         
         <view class="stats-row">
-          <view class="stat-item">
-            <text class="stat-value">0</text>
+          <view class="stat-item" @click="navigateTo('user/favorites')">
+            <text class="stat-value">3</text>
             <text class="stat-label">收藏</text>
           </view>
           <view class="stat-item">
             <text class="stat-value">0</text>
             <text class="stat-label">关注</text>
           </view>
-          <view class="stat-item">
-            <text class="stat-value">0</text>
+          <view class="stat-item" @click="navigateTo('user/history')">
+            <text class="stat-value">12</text>
             <text class="stat-label">足迹</text>
           </view>
           <view class="stat-item">
-            <text class="stat-value">0</text>
+            <text class="stat-value">500</text>
             <text class="stat-label">积分</text>
           </view>
         </view>
@@ -175,22 +175,14 @@
 
       <!-- 快捷入口 -->
       <view class="quick-section">
-        <view class="section-header">
-          <text class="section-title">常用功能</text>
-          <view class="more-link" @click="showAllFunctions">
-            <text>全部功能</text>
-            <u-icon name="arrow-right" size="12" color="#999"></u-icon>
-          </view>
-        </view>
-        
         <view class="quick-grid">
-          <view class="quick-item" @click="navigateTo('product/add')">
+          <view class="quick-item" @click="navigateTo('farmer/goods-edit')">
             <view class="icon-wrapper">
               <u-icon name="plus-circle" size="32" color="#4caf50"></u-icon>
             </view>
             <text class="quick-text">商品发布</text>
           </view>
-          <view class="quick-item" @click="navigateTo('order/list')">
+          <view class="quick-item" @click="navigateTo('farmer/order/list')">
             <view class="icon-wrapper">
               <u-icon name="order" size="32" color="#4caf50"></u-icon>
               <view class="badge" v-if="pendingOrders > 0">{{ pendingOrders }}</view>
@@ -203,13 +195,13 @@
             </view>
             <text class="quick-text">环境监测</text>
           </view>
-          <view class="quick-item" @click="navigateTo('ai/disease')">
+          <view class="quick-item" @click="navigateTo('ai/diagnose')">
             <view class="icon-wrapper">
               <u-icon name="scan" size="32" color="#4caf50"></u-icon>
             </view>
             <text class="quick-text">病虫害识别</text>
           </view>
-          <view class="quick-item" @click="navigateTo('data/sales')">
+          <view class="quick-item" @click="navigateTo('farmer/data')">
             <view class="icon-wrapper">
               <u-icon name="trending-up" size="32" color="#4caf50"></u-icon>
             </view>
@@ -218,48 +210,35 @@
         </view>
       </view>
 
-      <!-- 功能菜单 -->
-      <view class="menu-section">
-        <!-- 我的土地 -->
-        <view class="menu-group">
-          <view class="group-title">我的土地</view>
-          <u-cell-group :border="false">
-            <u-cell icon="map" title="土地档案" :isLink="true" @click="navigateTo('land/list')" :border="false"></u-cell>
-            <u-cell icon="edit-pen" title="农事记录" :isLink="true" @click="navigateTo('land/record')" :border="false"></u-cell>
-            <u-cell icon="wifi" title="IoT设备管理" :isLink="true" @click="navigateTo('land/iot')" :border="false"></u-cell>
-          </u-cell-group>
-        </view>
+      <!-- 功能菜单 - 卡片式导航 -->
+      <view class="feature-list-section">
+          <!-- 我的土地 -->
+          <view class="feature-card" @click="navigateTo('land/detail')">
+              <view class="accent-bar"></view>
+              <text class="card-title">我的土地</text>
+              <u-icon name="arrow-right" size="16" color="#ccc" class="arrow"></u-icon>
+          </view>
 
-        <!-- 农产品管理 -->
-        <view class="menu-group">
-          <view class="group-title">农产品管理</view>
-          <u-cell-group :border="false">
-            <u-cell icon="list" title="商品管理" :isLink="true" @click="navigateTo('product/list')" :border="false"></u-cell>
-            <u-cell icon="car" title="物流管理" :isLink="true" @click="navigateTo('order/logistics')" :border="false"></u-cell>
-            <u-cell icon="rmb-circle" title="售后管理" :isLink="true" @click="navigateTo('order/aftersale')" :border="false"></u-cell>
-          </u-cell-group>
-        </view>
-        
-        <!-- AI农技助手 -->
-        <view class="menu-group">
-          <view class="group-title">AI农技助手</view>
-          <u-cell-group :border="false">
-            <u-cell icon="kefu-ermai" title="智能问答" :isLink="true" @click="navigateTo('ai/qa')" :border="false"></u-cell>
-            <u-cell icon="hourglass" title="市场行情" :isLink="true" @click="navigateTo('ai/market')" :border="false"></u-cell>
-            <u-cell icon="calendar" title="种植方案" :isLink="true" @click="navigateTo('ai/plan')" :border="false"></u-cell>
-          </u-cell-group>
-        </view>
-        
-        <!-- 生活服务 (跳转回游客模式) -->
-        <view class="menu-group">
-          <view class="group-title">生活服务</view>
-          <u-cell-group :border="false">
-            <u-cell icon="shopping-cart" title="商城购物" :isLink="true" @click="navigateToVisitor('shop')" :border="false"></u-cell>
-            <u-cell icon="play-circle" title="观看直播" :isLink="true" @click="navigateToVisitor('live')" :border="false"></u-cell>
-            <u-cell icon="book" title="在线培训" :isLink="true" @click="navigateToVisitor('course')" :border="false"></u-cell>
-            <u-cell icon="account" title="个人中心" :isLink="true" @click="switchBack" :border="false"></u-cell>
-          </u-cell-group>
-        </view>
+          <!-- 农产品管理 -->
+          <view class="feature-card" @click="navigateTo('farmer/goods')">
+              <view class="accent-bar"></view>
+              <text class="card-title">农产品管理</text>
+              <u-icon name="arrow-right" size="16" color="#ccc" class="arrow"></u-icon>
+          </view>
+
+          <!-- AI农技助手 -->
+          <view class="feature-card" @click="navigateTo('ai/chat')">
+              <view class="accent-bar"></view>
+              <text class="card-title">AI农技助手</text>
+              <u-icon name="arrow-right" size="16" color="#ccc" class="arrow"></u-icon>
+          </view>
+
+          <!-- 生活服务 -->
+          <view class="feature-card" @click="switchBack">
+              <view class="accent-bar"></view>
+              <text class="card-title">生活服务</text>
+              <u-icon name="arrow-right" size="16" color="#ccc" class="arrow"></u-icon>
+          </view>
       </view>
       
       <!-- 底部占位 -->
@@ -270,7 +249,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onShow, onLoad } from '@dcloudio/uni-app'
 import { storage } from '@/utils/storage'
 
 const userInfo = ref<any>({})
@@ -286,12 +265,10 @@ const orderCounts = ref({
   aftersale: 0
 })
 
-onLoad(() => {
-  // 获取用户信息
+onShow(() => {
   const user = storage.get('user_info')
   if (user) {
     userInfo.value = user
-    // 判断是否管理员
     isAdmin.value = user.role === 'admin'
     // 恢复农户模式状态
     const savedMode = storage.get('is_farmer_mode')
@@ -307,13 +284,37 @@ onLoad(() => {
         unreceived: 2,  // 待收货
         uncomment: 0,   // 待评价 (已移除界面显示，但数据结构保留以免报错)
         aftersale: 3    // 退换/售后
-      }
+    }
   } else {
-    // ...
+    // 未登录状态重置
+    userInfo.value = {}
+    isAdmin.value = false
+    isFarmerMode.value = false
+    // 退出后自动重置回游客模式
+    if (storage.get('is_farmer_mode')) {
+        storage.set('is_farmer_mode', false)
+    }
+    
+    orderCounts.value = {
+        unpaid: 0,
+        unshipped: 0,
+        unreceived: 0,
+        uncomment: 0,
+        aftersale: 0
+    }
   }
 })
 
+onLoad(() => {
+  // Initial load logic moved to onShow for better state management
+})
+
 const goToUserInfo = () => {
+  // Check if user is logged in
+  if (!userInfo.value || !userInfo.value.nickname) {
+    uni.navigateTo({ url: '/pages/user/login' })
+    return
+  }
   uni.navigateTo({ url: '/pages/user/info' })
 }
 
@@ -339,7 +340,7 @@ const goToAdmin = () => {
 }
 
 const goToSettings = () => {
-  uni.showToast({ title: '设置功能开发中', icon: 'none' })
+  uni.navigateTo({ url: '/pages/user/settings' })
 }
 
 const goToLiveRoom = () => {
@@ -384,7 +385,36 @@ const switchBack = () => {
 }
 
 const navigateTo = (path: string) => {
-  uni.showToast({ title: '功能开发中', icon: 'none' })
+  // 处理带参数的路径
+  const cleanPath = path.split('?')[0]
+
+  // 农产品管理相关
+  if (path.startsWith('product/') || path.startsWith('farmer/goods')) {
+    uni.navigateTo({
+      url: `/pages/${path}`,
+      fail: (err) => {
+        console.error('Navigate failed:', err)
+        uni.showToast({ title: '跳转失败', icon: 'none' })
+      }
+    })
+    return
+  }
+  
+  // 通用跳转
+  let url = path.startsWith('/') ? path : `/pages/${path}`
+  
+  // 修正一些旧路径映射
+  if (path.startsWith('order/list')) {
+     url = `/pages/farmer/order/list`
+  }
+
+  uni.navigateTo({
+    url,
+    fail: (err) => {
+      console.error('Navigate failed:', err)
+      uni.showToast({ title: '跳转失败', icon: 'none' })
+    }
+  })
 }
 
 const navigateToVisitor = (type: string) => {
@@ -727,6 +757,7 @@ const handleLogout = () => {
           .sales {
             font-size: 20rpx;
             color: #999;
+            font-weight: 200;
           }
         }
       }
@@ -738,36 +769,16 @@ const handleLogout = () => {
   background: #fff;
   border-radius: 20rpx;
   margin: -40rpx 20rpx 20rpx;
-  padding: 30rpx;
+  padding: 0;
   position: relative;
   z-index: 1;
   box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.02);
   
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30rpx;
-    
-    .section-title {
-      font-size: 30rpx;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .more-link {
-      display: flex;
-      align-items: center;
-      font-size: 24rpx;
-      color: #999;
-      gap: 4rpx;
-    }
-  }
-  
   .quick-grid {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 10rpx 0;
+    padding: 30rpx 20rpx;
     
     .quick-item {
       display: flex;
@@ -775,6 +786,7 @@ const handleLogout = () => {
       align-items: center;
       gap: 12rpx;
       position: relative;
+      flex: 1;
       
       .icon-wrapper {
         position: relative;
@@ -800,25 +812,47 @@ const handleLogout = () => {
   }
 }
 
-.menu-section {
-  padding: 0 20rpx;
-  
-  .menu-group {
-    background: #fff;
-    border-radius: 20rpx;
-    margin-bottom: 20rpx;
-    overflow: hidden;
-    box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.01);
+.feature-list-section {
+    padding: 0 20rpx;
     
-    .group-title {
-      padding: 20rpx 30rpx 10rpx;
-      font-size: 28rpx;
-      font-weight: bold;
-      color: #333;
-      border-left: 8rpx solid #4caf50;
-      margin: 20rpx 0 10rpx 20rpx;
+    .feature-card {
+        background: #fff;
+        border-radius: 16rpx;
+        padding: 30rpx 20rpx;
+        margin-bottom: 20rpx;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.02);
+        
+        &:active {
+            background-color: #f9f9f9;
+        }
+        
+        .accent-bar {
+            position: absolute;
+            left: 0;
+            top: 25%;
+            bottom: 25%;
+            width: 8rpx;
+            height: 50%;
+            background: #4caf50;
+            border-radius: 0 4rpx 4rpx 0;
+        }
+        
+        .card-title {
+            flex: 1;
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #333;
+            margin-left: 24rpx;
+        }
+        
+        .arrow {
+            margin-right: 10rpx;
+        }
     }
-  }
 }
 
 .bottom-spacer {

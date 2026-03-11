@@ -1,7 +1,7 @@
 /**
  * 商品相关 API
  */
-import { httpGet, httpPost } from '@/utils/request'
+import { httpGet, httpPost, httpPut, httpDelete } from '@/utils/request'
 
 export interface Product {
   id: number
@@ -14,12 +14,22 @@ export interface Product {
   description?: string
   sales_count?: number
   stock?: number
+  stock_warning?: number
+  category?: string
+  status?: number // 1: 上架, 0: 下架
+  images?: string[]
 }
 
 /**
- * 获取商品列表
+ * 获取商品列表 (支持搜索、分类、状态筛选)
  */
-export async function getProductList(params?: any) {
+export async function getProductList(params?: { 
+  keyword?: string, 
+  category?: string, 
+  status?: number,
+  page?: number,
+  page_size?: number
+}) {
   try {
     const res = await httpGet<any>('/products', params, false)
     // 适配后端返回结构: { data: { items: [], ... } }
@@ -45,7 +55,10 @@ export async function getProductList(params?: any) {
         unit: '斤',
         description: '来自深山有机梯田，无农药，口感香甜',
         sales_count: 328,
-        stock: 1000
+        stock: 1000,
+        stock_warning: 100,
+        status: 1,
+        category: '粮油米面'
       },
       {
         id: 2,
@@ -57,7 +70,10 @@ export async function getProductList(params?: any) {
         unit: '盒',
         description: '海拔1200米云雾茶，手工采摘，清香怡人',
         sales_count: 156,
-        stock: 500
+        stock: 500,
+        stock_warning: 50,
+        status: 1,
+        category: '茶叶冲饮'
       },
       {
         id: 3,
@@ -68,7 +84,10 @@ export async function getProductList(params?: any) {
         unit: '箱',
         description: '散养土鸡蛋，30枚/箱，营养丰富',
         sales_count: 212,
-        stock: 300
+        stock: 300,
+        stock_warning: 20,
+        status: 0, // 下架
+        category: '肉禽蛋品'
       }
     ]
   }
@@ -79,6 +98,34 @@ export async function getProductList(params?: any) {
  */
 export function getProductDetail(id: number) {
   return httpGet<Product>(`/products/${id}`, {}, false)
+}
+
+/**
+ * 创建商品
+ */
+export function createProduct(data: Partial<Product>) {
+  return httpPost<Product>('/products', data)
+}
+
+/**
+ * 更新商品
+ */
+export function updateProduct(id: number, data: Partial<Product>) {
+  return httpPut<Product>(`/products/${id}`, data)
+}
+
+/**
+ * 删除商品
+ */
+export function deleteProduct(id: number) {
+  return httpDelete(`/products/${id}`)
+}
+
+/**
+ * 更新商品状态 (上架/下架)
+ */
+export function updateProductStatus(id: number, status: number) {
+  return httpPut(`/products/${id}/status`, { status })
 }
 
 /**

@@ -9,5 +9,12 @@ export default defineConfig({
       '@': path.join(__dirname, 'src'),
       '@components': path.join(__dirname, 'src/components')
     }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['legacy-js-api', 'import']
+      }
+    }
   }
 })

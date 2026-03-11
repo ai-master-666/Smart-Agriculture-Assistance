@@ -207,7 +207,7 @@ const categoryList = ref([
 const loadProducts = async () => {
   isLoading.value = true
   try {
-    const res = await getProductList({ keyword: keyword.value, sort: currentFilter.value })
+    const res = await getProductList({ keyword: keyword.value })
     // 模拟网络延迟以展示骨架屏
     setTimeout(() => {
       if (res) {
