@@ -61,6 +61,9 @@
             <button v-if="order.status === 'paid'" class="action-btn ship-btn" @click.stop="confirmShip(order)">
               确认收货
             </button>
+            <button v-if="order.status === 'paid' || order.status === 'shipped'" class="action-btn" @click.stop="viewLogistics(order)">
+              查看物流
+            </button>
             <button v-if="order.status === 'completed'" class="action-btn review-btn" @click.stop="reviewOrder(order)">
               评价
             </button>
@@ -151,7 +154,11 @@ const confirmShip = (order: any) => {
 }
 
 const reviewOrder = (order: any) => {
-  uni.showToast({ title: '评价功能开发中', icon: 'none' })
+  uni.navigateTo({ url: `/pages/shop/review?id=${order.id}` })
+}
+
+const viewLogistics = (order: any) => {
+  uni.navigateTo({ url: `/pages/shop/logistics?id=${order.id}` })
 }
 
 const viewDetail = (order: any) => {

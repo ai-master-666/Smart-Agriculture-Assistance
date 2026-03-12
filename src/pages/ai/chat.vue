@@ -27,14 +27,19 @@
     </scroll-view>
 
     <view class="input-area">
-      <input 
-        class="input-box" 
-        v-model="inputValue" 
-        placeholder="请输入您的问题..." 
-        confirm-type="send"
-        @confirm="handleSend"
-      />
-      <button class="send-btn" @click="handleSend" :disabled="isLoading || !inputValue.trim()">发送</button>
+      <view class="quick-actions">
+        <view class="action-tag" @click="goToPlan">生成旅游攻略</view>
+      </view>
+      <view class="input-row">
+        <input 
+          class="input-box" 
+          v-model="inputValue" 
+          placeholder="请输入您的问题..." 
+          confirm-type="send"
+          @confirm="handleSend"
+        />
+        <button class="send-btn" @click="handleSend" :disabled="isLoading || !inputValue.trim()">发送</button>
+      </view>
     </view>
   </view>
 </template>
@@ -70,6 +75,10 @@ const scrollToBottom = () => {
     scrollTop.value = messages.value.length * 1000 // 简单粗暴滚动到底部
     scrollIntoView.value = `msg-${messages.value[messages.value.length - 1].id}`
   })
+}
+
+const goToPlan = () => {
+  uni.navigateTo({ url: '/pages/ai/plan' })
 }
 
 const handleSend = async () => {
@@ -170,8 +179,28 @@ const handleSend = async () => {
   padding: 20rpx;
   background: #fff;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+  
+  .quick-actions {
+    display: flex;
+    margin-bottom: 16rpx;
+    
+    .action-tag {
+      font-size: 24rpx;
+      color: #667eea;
+      background: #f0f5ff;
+      padding: 8rpx 20rpx;
+      border-radius: 24rpx;
+      margin-right: 16rpx;
+    }
+  }
+  
+  .input-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
   
   .input-box {
     flex: 1;

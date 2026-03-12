@@ -12,6 +12,12 @@
         @error="onVideoError"
       ></video>
       
+      <!-- 礼物动画 -->
+      <view v-if="showGiftAnimation" class="gift-animation" :style="{ color: currentGift?.color }">
+        <u-icon :name="currentGift?.icon" size="80"></u-icon>
+        <text class="gift-name">{{ currentGift?.name }}</text>
+      </view>
+      
       <!-- 直播信息覆盖层 -->
       <view class="overlay-info">
         <view class="top-bar">
@@ -77,6 +83,10 @@
         <u-icon :name="isLiked ? 'heart-fill' : 'heart'" size="28" :color="isLiked ? '#ff4d4f' : '#fff'"></u-icon>
       </view>
       
+      <view class="action-btn" @click="showContributors = !showContributors">
+        <u-icon name="ranking" size="28" color="#fff"></u-icon>
+      </view>
+      
       <view class="action-btn share-btn">
         <button open-type="share" class="share-trigger"></button>
         <u-icon name="share" size="28" color="#fff"></u-icon>
@@ -124,6 +134,29 @@
         </view>
     </u-popup>
     
+    <!-- 贡献榜弹窗 -->
+    <u-popup :show="showContributors" mode="right" @close="showContributors = false" :round="16" :width="300">
+        <view class="contributors-popup">
+            <view class="popup-header">
+                <text class="title">贡献榜</text>
+                <u-icon name="close" size="20" color="#999" @click="showContributors = false"></u-icon>
+            </view>
+            <scroll-view scroll-y class="contributors-list">
+                <view class="contributor-item" v-for="(item, index) in giftContributors" :key="index">
+                    <view class="rank-number" :class="{ 'top-three': index < 3 }">
+                        {{ index + 1 }}
+                    </view>
+                    <image :src="item.avatar" mode="aspectFill" class="contributor-avatar"></image>
+                    <text class="contributor-name">{{ item.name }}</text>
+                    <text class="contributor-amount">{{ item.amount }}金豆</text>
+                </view>
+                <view v-if="giftContributors.length === 0" class="empty-contributors">
+                    <text>暂无贡献</text>
+                </view>
+            </scroll-view>
+        </view>
+    </u-popup>
+    
   </view>
 </template>
 
@@ -157,7 +190,11 @@ const giftList = ref([
     { id: 1, name: '鲜花', price: 10, icon: 'gift', color: '#ff4d4f' },
     { id: 2, name: '爱心', price: 50, icon: 'heart-fill', color: '#ff7875' },
     { id: 3, name: '拖拉机', price: 100, icon: 'car-fill', color: '#1890ff' },
-    { id: 4, name: '火箭', price: 1000, icon: 'plane-fill', color: '#722ed1' }
+    { id: 4, name: '火箭', price: 1000, icon: 'plane-fill', color: '#722ed1' },
+    { id: 5, name: '金蛋', price: 20, icon: 'egg', color: '#ffc107' },
+    { id: 6, name: '奖杯', price: 200, icon: 'trophy', color: '#ff9800' },
+    { id: 7, name: '烟花', price: 500, icon: 'firework', color: '#e91e63' },
+    { id: 8, name: '城堡', price: 2000, icon: 'home', color: '#9c27b0' }
 ])
 
 let socketTask: any = null
@@ -264,15 +301,52 @@ const buyGood = (item: any) => {
     })
 }
 
+// 礼物动画相关
+const showGiftAnimation = ref(false)
+const currentGift = ref<any>(null)
+const giftContributors = ref<any[]>([])
+const showContributors = ref(false)
+
 const sendGift = (gift: any) => {
     showGift.value = false
     uni.showToast({ title: `送出 ${gift.name}`, icon: 'success' })
+    
+    // 显示礼物动画
+    showGiftAnimation.value = true
+    currentGift.value = gift
+    setTimeout(() => {
+        showGiftAnimation.value = false
+    }, 2000)
+    
     // Add gift message to danmu
     danmuList.value.push({
         nickname: '系统',
         content: `我送出了 ${gift.name} x1`
     })
+    
+    // 更新贡献榜
+    updateContributors(gift)
+    
     scrollToBottom()
+}
+
+const updateContributors = (gift: any) => {
+    const existingUser = giftContributors.value.find(item => item.name === '我')
+    if (existingUser) {
+        existingUser.amount += gift.price
+    } else {
+        giftContributors.value.push({
+            name: '我',
+            amount: gift.price,
+            avatar: '/static/default-avatar.png'
+        })
+    }
+    // 按贡献值排序
+    giftContributors.value.sort((a, b) => b.amount - a.amount)
+    // 只保留前5名
+    if (giftContributors.value.length > 5) {
+        giftContributors.value = giftContributors.value.slice(0, 5)
+    }
 }
 
 const exitRoom = () => {
@@ -663,6 +737,116 @@ onUnmounted(() => {
                 font-size: 20rpx;
                 color: #999;
             }
+        }
+    }
+}
+
+/* 礼物动画 */
+.gift-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    animation: giftFloat 2s ease-in-out;
+    
+    .gift-name {
+        font-size: 32rpx;
+        font-weight: bold;
+        margin-top: 10rpx;
+    }
+}
+
+@keyframes giftFloat {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0.8);
+    }
+}
+
+/* 贡献榜 */
+.contributors-popup {
+    padding: 30rpx;
+    background: #fff;
+    height: 100%;
+    
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30rpx;
+        
+        .title {
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #333;
+        }
+    }
+    
+    .contributors-list {
+        height: calc(100% - 80rpx);
+        
+        .contributor-item {
+            display: flex;
+            align-items: center;
+            padding: 20rpx 0;
+            border-bottom: 1rpx solid #f5f5f5;
+            
+            .rank-number {
+                width: 50rpx;
+                font-size: 28rpx;
+                font-weight: bold;
+                color: #999;
+                text-align: center;
+                
+                &.top-three {
+                    color: #ff4d4f;
+                }
+            }
+            
+            .contributor-avatar {
+                width: 60rpx;
+                height: 60rpx;
+                border-radius: 30rpx;
+                margin-right: 16rpx;
+                background: #f5f5f5;
+            }
+            
+            .contributor-name {
+                flex: 1;
+                font-size: 28rpx;
+                color: #333;
+            }
+            
+            .contributor-amount {
+                font-size: 26rpx;
+                color: #ff4d4f;
+                font-weight: bold;
+            }
+        }
+        
+        .empty-contributors {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200rpx;
+            color: #999;
+            font-size: 24rpx;
         }
     }
 }

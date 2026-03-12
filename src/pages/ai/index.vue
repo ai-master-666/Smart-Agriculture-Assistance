@@ -6,36 +6,36 @@
     </view>
 
     <view class="feature-grid">
-      <view class="feature-card" @click="goToChat">
-        <view class="icon-wrapper chat-icon">
-          <u-icon name="chat-fill" size="32" color="#fff"></u-icon>
+      <view class="feature-card" @click="goToVillage">
+        <view class="icon-wrapper village-icon">
+          <u-icon name="location-fill" size="32" color="#fff"></u-icon>
         </view>
-        <text class="feature-title">智能问答</text>
-        <text class="feature-desc">农业技术、村庄百科随心问</text>
+        <text class="feature-title">村庄百科</text>
+        <text class="feature-desc">了解村庄历史、文化与产业</text>
       </view>
 
-      <view class="feature-card" @click="goToDiagnose">
-        <view class="icon-wrapper camera-icon">
-          <u-icon name="camera-fill" size="32" color="#fff"></u-icon>
+      <view class="feature-card" @click="goToRecommend">
+        <view class="icon-wrapper recommend-icon">
+          <u-icon name="star-fill" size="32" color="#fff"></u-icon>
         </view>
-        <text class="feature-title">拍照诊断</text>
-        <text class="feature-desc">病虫害识别、作物健康分析</text>
-      </view>
-
-      <view class="feature-card" @click="showFeature('market')">
-        <view class="icon-wrapper market-icon">
-          <u-icon name="trending-up" size="32" color="#fff"></u-icon>
-        </view>
-        <text class="feature-title">行情分析</text>
-        <text class="feature-desc">农产品价格趋势预测</text>
-      </view>
-
-      <view class="feature-card" @click="showFeature('guide')">
-        <view class="icon-wrapper guide-icon">
-          <u-icon name="map-fill" size="32" color="#fff"></u-icon>
-        </view>
-        <text class="feature-title">游玩攻略</text>
+        <text class="feature-title">景点推荐</text>
         <text class="feature-desc">个性化定制乡村游路线</text>
+      </view>
+
+      <view class="feature-card" @click="goToProduct">
+        <view class="icon-wrapper product-icon">
+          <u-icon name="shop-fill" size="32" color="#fff"></u-icon>
+        </view>
+        <text class="feature-title">农产品咨询</text>
+        <text class="feature-desc">种植、销售专业建议</text>
+      </view>
+
+      <view class="feature-card" @click="goToService">
+        <view class="icon-wrapper service-icon">
+          <u-icon name="headphones-fill" size="32" color="#fff"></u-icon>
+        </view>
+        <text class="feature-title">智能客服</text>
+        <text class="feature-desc">24小时在线解答疑问</text>
       </view>
     </view>
 
@@ -52,20 +52,24 @@
 </template>
 
 <script setup lang="ts">
-const goToChat = () => {
-  uni.navigateTo({ url: '/pages/ai/chat' })
+const goToVillage = () => {
+  uni.navigateTo({ url: '/pages/ai/village' })
 }
 
-const goToDiagnose = () => {
-  uni.navigateTo({ url: '/pages/ai/diagnose' })
+const goToRecommend = () => {
+  uni.navigateTo({ url: '/pages/ai/recommend' })
 }
 
-const showFeature = (type: string) => {
-  uni.showToast({ title: '功能即将上线', icon: 'none' })
+const goToProduct = () => {
+  uni.navigateTo({ url: '/pages/ai/product' })
+}
+
+const goToService = () => {
+  uni.navigateTo({ url: '/pages/ai/service' })
 }
 
 const quickAsk = (question: string) => {
-  uni.navigateTo({ url: `/pages/ai/chat?q=${encodeURIComponent(question)}` })
+  uni.navigateTo({ url: `/pages/ai/service` })
 }
 </script>
 
@@ -116,10 +120,10 @@ const quickAsk = (question: string) => {
       justify-content: center;
       margin-bottom: 20rpx;
       
-      &.chat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-      &.camera-icon { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-      &.market-icon { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
-      &.guide-icon { background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); }
+      &.village-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+      &.recommend-icon { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+      &.product-icon { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+      &.service-icon { background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); }
     }
     
     .feature-title {

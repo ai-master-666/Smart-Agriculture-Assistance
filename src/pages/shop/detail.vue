@@ -22,6 +22,15 @@
           <text>库存 {{ product.stock || 0 }}</text>
         </view>
       </view>
+
+      <view class="divider"></view>
+
+      <!-- 规格选择入口 -->
+      <view class="sku-cell" @click="openSku">
+        <text class="label">选择</text>
+        <text class="value">{{ selectedSkuText || '请选择规格' }}</text>
+        <u-icon name="arrow-right" size="14" color="#999"></u-icon>
+      </view>
       
       <view class="divider"></view>
 
@@ -66,20 +75,91 @@
         <u-icon name="shopping-cart" size="24" color="#666"></u-icon>
         <text>购物车</text>
       </view>
-      <button class="add-cart-btn" @click="handleAddToCart">加入购物车</button>
-      <button class="buy-now-btn" @click="handleBuyNow">立即购买</button>
+      <button class="add-cart-btn" @click="openSku">加入购物车</button>
+      <button class="buy-now-btn" @click="openSku">立即购买</button>
     </view>
+
+    <!-- SKU Popup -->
+    <u-popup :show="showSku" @close="closeSku" mode="bottom" round="16" :closeable="true">
+      <view class="sku-popup">
+        <view class="sku-header">
+          <image :src="product.cover_image || '/static/default-product.png'" mode="aspectFill" class="sku-img"></image>
+          <view class="sku-info">
+            <text class="sku-price">¥{{ currentPrice }}</text>
+            <text class="sku-stock">库存 {{ currentStock }} 件</text>
+            <text class="sku-selected">已选：{{ selectedSpec || '请选择规格' }}</text>
+          </view>
+        </view>
+        
+        <scroll-view scroll-y class="sku-scroll">
+          <view class="sku-group">
+            <text class="group-title">规格</text>
+            <view class="spec-list">
+              <view 
+                class="spec-item" 
+                v-for="(spec, index) in specs" 
+                :key="index"
+                :class="{ active: selectedSpec === spec.name }"
+                @click="selectSpec(spec)"
+              >
+                {{ spec.name }}
+              </view>
+            </view>
+          </view>
+          
+          <view class="count-box">
+            <text class="label">购买数量</text>
+            <u-number-box v-model="buyCount" :min="1" :max="currentStock" integer></u-number-box>
+          </view>
+        </scroll-view>
+        
+        <view class="sku-footer">
+          <button class="confirm-btn" @click="confirmSku">确定</button>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { getProductDetail, addToCart } from '@/api/product'
 import type { Product } from '@/api/product'
 
 const product = ref<Product | null>(null)
 const isFavorite = ref(false)
+const showSku = ref(false)
+const buyCount = ref(1)
+const selectedSpec = ref('')
+
+// Mock SKU data
+const specs = ref([
+  { name: '500g', price: 0, stock: 100 },
+  { name: '1kg', price: 10, stock: 50 }, // Price diff
+  { name: '2.5kg礼盒装', price: 40, stock: 20 }
+])
+
+const currentPrice = computed(() => {
+  if (!product.value) return '0.00'
+  const spec = specs.value.find(s => s.name === selectedSpec.value)
+  const basePrice = Number(product.value.price)
+  if (spec) {
+    return (basePrice + spec.price).toFixed(2)
+  }
+  return basePrice.toFixed(2)
+})
+
+const currentStock = computed(() => {
+    if (!product.value) return 0
+    const spec = specs.value.find(s => s.name === selectedSpec.value)
+    return spec ? spec.stock : (product.value.stock || 0)
+})
+
+const selectedSkuText = computed(() => {
+    if (!selectedSpec.value) return ''
+    return `${selectedSpec.value}, ${buyCount.value}件`
+})
 
 onLoad(async (options: any) => {
   if (options.id) {
@@ -97,6 +177,11 @@ onLoad(async (options: any) => {
             content: '非常新鲜，包装也很好，第二天就到了！'
           }
         ]
+        
+        // Auto select first spec
+        if (specs.value.length > 0) {
+            selectedSpec.value = specs.value[0].name
+        }
       }
     } catch (e) {
       console.error('Failed to load product detail:', e)
@@ -124,10 +209,28 @@ const goToReviews = () => {
   uni.showToast({ title: '查看全部评价', icon: 'none' })
 }
 
+const openSku = () => {
+  showSku.value = true
+}
+
+const closeSku = () => {
+  showSku.value = false
+}
+
+const selectSpec = (spec: any) => {
+  selectedSpec.value = spec.name
+}
+
+const confirmSku = () => {
+  handleAddToCart()
+  closeSku()
+}
+
 const handleAddToCart = async () => {
   if (product.value) {
     try {
-      await addToCart(product.value.id, 1)
+      // Pass SKU info to API (mock logic as API might not support it yet)
+      await addToCart(product.value.id, buyCount.value)
       uni.showToast({
         title: '已加入购物车',
         icon: 'success'
@@ -143,12 +246,7 @@ const handleAddToCart = async () => {
 }
 
 const handleBuyNow = () => {
-  // TODO: Implement buy now logic
-  handleAddToCart().then(() => {
-    uni.navigateTo({
-      url: '/pages/shop/cart'
-    })
-  })
+    openSku()
 }
 
 const goToCart = () => {
@@ -226,6 +324,24 @@ const goToCart = () => {
   height: 20rpx;
   background-color: #f8f8f8;
   margin: 0 -30rpx 30rpx;
+}
+
+.sku-cell {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+  
+  .label {
+    font-size: 28rpx;
+    color: #999;
+    width: 80rpx;
+  }
+  
+  .value {
+    flex: 1;
+    font-size: 28rpx;
+    color: #333;
+  }
 }
 
 .review-section {
@@ -351,6 +467,125 @@ const goToCart = () => {
   .buy-now-btn {
     background: linear-gradient(to right, #ff6b81, #ff4757);
     color: #fff;
+  }
+}
+
+.sku-popup {
+  padding: 30rpx;
+  background: #fff;
+  min-height: 600rpx;
+  display: flex;
+  flex-direction: column;
+  
+  .sku-header {
+    display: flex;
+    margin-bottom: 30rpx;
+    
+    .sku-img {
+      width: 180rpx;
+      height: 180rpx;
+      border-radius: 12rpx;
+      margin-right: 20rpx;
+      background: #f5f5f5;
+    }
+    
+    .sku-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      
+      .sku-price {
+        font-size: 40rpx;
+        color: #ff4d4f;
+        font-weight: bold;
+        margin-bottom: 8rpx;
+      }
+      
+      .sku-stock {
+        font-size: 24rpx;
+        color: #999;
+        margin-bottom: 8rpx;
+      }
+      
+      .sku-selected {
+        font-size: 26rpx;
+        color: #333;
+      }
+    }
+  }
+  
+  .sku-scroll {
+    flex: 1;
+    max-height: 600rpx;
+    
+    .sku-group {
+      margin-bottom: 30rpx;
+      
+      .group-title {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20rpx;
+        display: block;
+      }
+      
+      .spec-list {
+        display: flex;
+        flex-wrap: wrap;
+        
+        .spec-item {
+          padding: 10rpx 30rpx;
+          background: #f5f5f5;
+          border-radius: 30rpx;
+          font-size: 26rpx;
+          color: #333;
+          margin-right: 20rpx;
+          margin-bottom: 20rpx;
+          border: 2rpx solid transparent;
+          
+          &.active {
+            background: #fff1f0;
+            color: #ff4d4f;
+            border-color: #ff4d4f;
+          }
+        }
+      }
+    }
+    
+    .count-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40rpx;
+      margin-bottom: 40rpx;
+      
+      .label {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #333;
+      }
+    }
+  }
+  
+  .sku-footer {
+    padding-top: 20rpx;
+    
+    .confirm-btn {
+      width: 100%;
+      height: 80rpx;
+      line-height: 80rpx;
+      background: linear-gradient(135deg, #ff6034, #ee0a24);
+      color: #fff;
+      border-radius: 40rpx;
+      font-size: 30rpx;
+      font-weight: bold;
+      border: none;
+      
+      &::after {
+        border: none;
+      }
+    }
   }
 }
 </style>

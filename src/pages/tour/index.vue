@@ -7,6 +7,26 @@
       </swiper-item>
     </swiper>
 
+    <!-- 快捷入口 -->
+    <view class="quick-actions">
+      <view class="action-card" @click="goToStrategy">
+        <u-icon name="route" size="40" color="#667eea"></u-icon>
+        <text>游玩攻略</text>
+      </view>
+      <view class="action-card" @click="goToCheckin">
+        <u-icon name="location" size="40" color="#ff9900"></u-icon>
+        <text>打卡签到</text>
+      </view>
+      <view class="action-card" @click="goToVR">
+        <u-icon name="glasses" size="40" color="#52c41a"></u-icon>
+        <text>VR全景</text>
+      </view>
+      <view class="action-card" @click="goToBooking">
+        <u-icon name="calendar" size="40" color="#ff4d4f"></u-icon>
+        <text>体验预约</text>
+      </view>
+    </view>
+
     <!-- 景点列表 -->
     <view class="scenic-list">
       <view 
@@ -81,6 +101,22 @@ const goToDetail = (id: number) => {
   uni.navigateTo({ url: `/pages/tour/detail?id=${id}` })
 }
 
+const goToStrategy = () => {
+  uni.navigateTo({ url: '/pages/tour/strategy' })
+}
+
+const goToCheckin = () => {
+  uni.navigateTo({ url: '/pages/tour/checkin' })
+}
+
+const goToVR = () => {
+  uni.navigateTo({ url: '/pages/tour/vr' })
+}
+
+const goToBooking = () => {
+  uni.navigateTo({ url: '/pages/tour/booking' })
+}
+
 onLoad(() => {
   loadScenicSpots()
 })
@@ -103,6 +139,27 @@ onPullDownRefresh(() => {
   .banner-img {
     width: 100%;
     height: 100%;
+  }
+}
+
+.quick-actions {
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  padding: 30rpx 0;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  
+  .action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    text {
+      margin-top: 12rpx;
+      font-size: 24rpx;
+      color: #333;
+    }
   }
 }
 

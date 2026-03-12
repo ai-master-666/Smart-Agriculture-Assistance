@@ -82,6 +82,15 @@
         </view>
       </view>
 
+      <!-- 功能菜单 -->
+      <view class="feature-menu-section">
+        <view class="feature-card" @click="goToService">
+          <view class="accent-bar"></view>
+          <text class="card-title">客服中心</text>
+          <u-icon name="arrow-right" size="16" color="#ccc" class="arrow"></u-icon>
+        </view>
+      </view>
+
       <!-- 猜你喜欢（推荐商品与直播） -->
       <view class="recommend-section">
         <view class="section-title">
@@ -349,6 +358,10 @@ const goToLiveRoom = () => {
 
 const goToProductDetail = () => {
   uni.navigateTo({ url: '/pages/shop/detail?id=1' })
+}
+
+const goToService = () => {
+  uni.navigateTo({ url: '/pages/user/service' })
 }
 
 const switchRole = () => {
@@ -639,6 +652,51 @@ const handleLogout = () => {
         font-size: 24rpx;
         color: #666;
       }
+    }
+  }
+}
+
+.feature-menu-section {
+  padding: 0 20rpx;
+  margin-bottom: 20rpx;
+  position: relative;
+  z-index: 1;
+  
+  .feature-card {
+    background: #fff;
+    border-radius: 16rpx;
+    padding: 30rpx 20rpx;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.02);
+    
+    &:active {
+      background-color: #f9f9f9;
+    }
+    
+    .accent-bar {
+      position: absolute;
+      left: 0;
+      top: 25%;
+      bottom: 25%;
+      width: 8rpx;
+      height: 50%;
+      background: #667eea;
+      border-radius: 0 4rpx 4rpx 0;
+    }
+    
+    .card-title {
+      flex: 1;
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #333;
+      margin-left: 24rpx;
+    }
+    
+    .arrow {
+      margin-right: 10rpx;
     }
   }
 }

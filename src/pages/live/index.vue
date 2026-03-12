@@ -37,7 +37,7 @@
           
           <!-- 预约按钮 -->
           <view class="subscribe-btn" v-if="live.status === 'pending'" @click.stop="subscribeLive(live)">
-            <text>预约</text>
+            <text>{{ live.is_subscribed ? '已预约' : '预约' }}</text>
           </view>
         </view>
         
@@ -164,14 +164,30 @@ const onSearch = () => {
 }
 
 const enterRoom = (roomId: number) => {
-  uni.navigateTo({ url: `/pages/live/room?id=${roomId}` })
+  const live = liveList.value.find(item => item.id === roomId)
+  if (live && live.status === 'pending') {
+     subscribeLive(live)
+     return
+  }
+  uni.navigateTo({ url: `/pages/live/room?id=${roomId}&status=${live?.status || 'live'}` })
 }
 
 const subscribeLive = (live: any) => {
-  uni.requestSubscribeMessage({
-    tmplIds: ['xxx'], // 需替换为真实模板ID
-    complete: () => {
-      uni.showToast({ title: '预约成功', icon: 'success' })
+  if (live.is_subscribed) {
+    uni.showToast({ title: '您已预约该场直播', icon: 'none' })
+    return
+  }
+  
+  // 模拟订阅消息逻辑
+  uni.showModal({
+    title: '预约提醒',
+    content: `确认预约 ${live.host_name} 的直播？开播前将通过消息通知您。`,
+    success: (res) => {
+      if (res.confirm) {
+        // 真实场景下应调用 uni.requestSubscribeMessage
+        live.is_subscribed = true
+        uni.showToast({ title: '预约成功', icon: 'success' })
+      }
     }
   })
 }
