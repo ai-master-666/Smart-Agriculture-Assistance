@@ -1,45 +1,187 @@
-import { httpPost, httpUpload } from '@/utils/request'
+/**
+ * AI村庄助手相关 API
+ */
+import { httpGet, httpPost } from '@/utils/request'
 
-export interface ChatMessage {
-  id: string
-  role: 'user' | 'assistant'
+export interface AIChatMessage {
+  id: number
   content: string
-  timestamp: number
-  type?: 'text' | 'image' | 'voice'
+  type: 'user' | 'ai'
+  created_at: string
+}
+
+/**
+ * 聊天消息类型定义（兼容旧接口）
+ */
+export type ChatMessage = AIChatMessage
+
+export interface VillageEncyclopedia {
+  id: number
+  title: string
+  content: string
+  category: 'history' | 'culture' | 'industry' | 'customs'
+  images?: string[]
+  created_at: string
+}
+
+export interface ScenicSpot {
+  id: number
+  name: string
+  description: string
+  image: string
+  address: string
+  rating: number
+  tags: string[]
+  duration: number
+}
+
+export interface RecommendedRoute {
+  id: number
+  title: string
+  description: string
+  spots: ScenicSpot[]
+  total_duration: number
+  difficulty: 'easy' | 'medium' | 'hard'
+}
+
+export interface ProductConsultation {
+  id: number
+  product_id: number
+  product_name: string
+  product_image: string
+  planting_advice: string[]
+  market_analysis: string[]
+  sales_advice: string[]
+  created_at: string
+}
+
+export interface TravelGuide {
+  id: number
+  title: string
+  description: string
+  day_plans: Array<{
+    day: number
+    spots: ScenicSpot[]
+    activities: string[]
+    accommodation: string
+  }>
+  total_duration: number
+  budget: number
+  created_at: string
 }
 
 export interface DiagnoseResult {
-  disease_name: string
+  id: number
+  disease: string
   confidence: number
   description: string
-  treatment: string
-  preventive_measures: string
+  treatment: string[]
+  image_url: string
+  created_at: string
 }
 
 /**
- * AI 智能问答
- * @param query 用户提问
- * @param history 历史对话上下文
+ * 智能问答
  */
-export function chatWithAI(query: string, history: ChatMessage[] = []) {
-  // 预留接口：后端对接 DeepSeek/ChatGPT/文心一言 等大模型
-  return httpPost<ChatMessage>('/ai/chat', { query, history })
+export function askAIQuestion(data: {
+  question: string
+  type?: 'text' | 'voice'
+  voice_url?: string
+}) {
+  return httpPost<{ answer: string }>('/ai/chat', data)
 }
 
 /**
- * 图像识别诊断（病虫害/作物健康）
- * @param filePath 图片本地路径
+ * 智能问答（兼容旧接口）
  */
-export function diagnoseCrop(filePath: string) {
-  // 预留接口：后端对接百度 AI/阿里云 AI 图像识别服务
-  return httpUpload<DiagnoseResult>('/ai/diagnose', filePath)
+export function chatWithAI(data: {
+  question: string
+  type?: 'text' | 'voice'
+  voice_url?: string
+}) {
+  return askAIQuestion(data)
 }
 
 /**
- * 获取 AI 知识库推荐
- * @param type 推荐类型：'spot' | 'product' | 'course'
- * @param keywords 关键词
+ * 获取聊天历史
  */
-export function getAIRecommendations(type: string, keywords: string) {
-  return httpPost<any[]>('/ai/recommend', { type, keywords })
+export function getChatHistory(params?: {
+  page?: number
+  page_size?: number
+}) {
+  return httpGet<{ items: AIChatMessage[], total: number }>('/ai/chat/history', params)
+}
+
+/**
+ * 获取村庄百科
+ */
+export function getVillageEncyclopedia(params?: {
+  category?: 'history' | 'culture' | 'industry' | 'customs'
+  page?: number
+  page_size?: number
+}) {
+  return httpGet<{ items: VillageEncyclopedia[], total: number }>('/ai/encyclopedia', params)
+}
+
+/**
+ * 获取百科详情
+ */
+export function getEncyclopediaDetail(id: number) {
+  return httpGet<VillageEncyclopedia>(`/ai/encyclopedia/${id}`)
+}
+
+/**
+ * 景点推荐
+ */
+export function getScenicRecommendations(data: {
+  duration: number
+  preferences: string[]
+  date?: string
+  people_count?: number
+}) {
+  return httpPost<RecommendedRoute[]>('/ai/recommend/scenic', data)
+}
+
+/**
+ * 农产品咨询
+ */
+export function consultProduct(data: {
+  product_id?: number
+  product_name?: string
+  question?: string
+}) {
+  return httpPost<ProductConsultation>('/ai/consult/product', data)
+}
+
+/**
+ * 生成旅游攻略
+ */
+export function generateTravelGuide(data: {
+  duration: number
+  preferences: string[]
+  date?: string
+  people_count?: number
+  budget?: number
+}) {
+  return httpPost<TravelGuide>('/ai/generate/guide', data)
+}
+
+/**
+ * 智能客服
+ */
+export function askCustomerService(data: {
+  question: string
+  type?: 'order' | 'booking' | 'navigation' | 'other'
+}) {
+  return httpPost<{ answer: string }>('/ai/service', data)
+}
+
+/**
+ * 作物诊断
+ */
+export function diagnoseCrop(data: {
+  image: string
+  crop_type?: string
+}) {
+  return httpPost<DiagnoseResult>('/ai/diagnose', data)
 }

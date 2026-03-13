@@ -30,6 +30,14 @@
         <text class="feature-desc">种植、销售专业建议</text>
       </view>
 
+      <view class="feature-card" @click="goToChat">
+        <view class="icon-wrapper chat-icon">
+          <u-icon name="chat-fill" size="32" color="#fff"></u-icon>
+        </view>
+        <text class="feature-title">智能问答</text>
+        <text class="feature-desc">农业技术、村庄百科随心问</text>
+      </view>
+
       <view class="feature-card" @click="goToService">
         <view class="icon-wrapper service-icon">
           <u-icon name="headphones-fill" size="32" color="#fff"></u-icon>
@@ -68,8 +76,12 @@ const goToService = () => {
   uni.navigateTo({ url: '/pages/ai/service' })
 }
 
+const goToChat = () => {
+  uni.navigateTo({ url: '/pages/ai/chat' })
+}
+
 const quickAsk = (question: string) => {
-  uni.navigateTo({ url: `/pages/ai/service` })
+  uni.navigateTo({ url: `/pages/ai/chat?q=${encodeURIComponent(question)}` })
 }
 </script>
 
@@ -123,6 +135,7 @@ const quickAsk = (question: string) => {
       &.village-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
       &.recommend-icon { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
       &.product-icon { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+      &.chat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
       &.service-icon { background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%); }
     }
     
